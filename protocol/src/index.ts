@@ -217,3 +217,158 @@ export interface ActiveFault {
   until: number | null;
   value?: number;
 }
+
+// ---------------------------------------------------------------------------
+// Live Incident Response
+// ---------------------------------------------------------------------------
+
+export type IncidentStatus = 'active' | 'ended';
+
+export type ParticipantRole = 'commander' | 'responder';
+
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+}
+
+export interface Participant {
+  id: string;
+  userId: string;
+  name: string;
+  role: ParticipantRole;
+  joinedAt: number;
+  /** Set when the participant explicitly left or the incident ended. */
+  leftAt: number | null;
+  /** Live socket presence: false while the browser is closed or reconnecting. */
+  connected: boolean;
+  lastSeenAt: number;
+  location: { latitude: number; longitude: number } | null;
+  locationUpdatedAt: number | null;
+  videoOn: boolean;
+}
+
+export interface ChatMessage {
+  id: string;
+  incidentId: string;
+  participantId: string;
+  authorName: string;
+  text: string;
+  replyToId: string | null;
+  createdAt: number;
+}
+
+export interface MapMarker {
+  id: string;
+  incidentId: string;
+  participantId: string;
+  authorName: string;
+  label: string;
+  latitude: number;
+  longitude: number;
+  createdAt: number;
+}
+
+export type IncidentEventType =
+  | 'incident-created'
+  | 'incident-ended'
+  | 'participant-joined'
+  | 'participant-left'
+  | 'participant-connected'
+  | 'participant-disconnected'
+  | 'command-sent'
+  | 'alert'
+  | 'chat'
+  | 'marker'
+  | 'location-update'
+  | 'video-state';
+
+export interface IncidentEvent {
+  id: string;
+  incidentId: string;
+  at: number;
+  type: IncidentEventType;
+  actor: string;
+  summary: string;
+  data?: unknown;
+}
+
+export interface Incident {
+  id: string;
+  title: string;
+  kind: string;
+  status: IncidentStatus;
+  createdByUserId: string;
+  createdByName: string;
+  createdAt: number;
+  endedAt: number | null;
+}
+
+/** Secret suffix of the joining link; /join/:token resolves to one incident. */
+export interface JoinLink {
+  incidentId: string;
+  token: string;
+}
+
+export interface IncidentStatePayload {
+  incident: Incident;
+  participants: Participant[];
+}
+
+export interface Session {
+  token: string;
+  user: User;
+}
+
+export interface AuthOtpRequest {
+  email: string;
+}
+
+export interface AuthOtpResponse {
+  ok: boolean;
+  /** Demo environments have no mail service: the code is returned so the flow stays reproducible. */
+  dev_otp?: string;
+}
+
+export interface AuthVerifyRequest {
+  email: string;
+  otp: string;
+  name?: string;
+}
+
+export interface IncidentCreateRequest {
+  title: string;
+  kind?: string;
+}
+
+export interface IncidentJoinRequest {
+  name?: string;
+}
+
+export interface ChatPostRequest {
+  text: string;
+  replyToId?: string | null;
+}
+
+export interface MarkerPostRequest {
+  label: string;
+  latitude: number;
+  longitude: number;
+}
+
+export interface LocationPostRequest {
+  latitude: number;
+  longitude: number;
+}
+
+export interface ParticipantVideoRequest {
+  on: boolean;
+}
+
+/** Client → server broadcast of one participant video frame (JPEG data URL). */
+export interface IncidentFrameMessage {
+  incidentId: string;
+  participantId: string;
+  dataUrl: string;
+  at: number;
+}

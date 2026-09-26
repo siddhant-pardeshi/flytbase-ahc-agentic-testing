@@ -1,0 +1,638 @@
+{
+  "generatedAt": "2026-09-26T08:45:26.075Z",
+  "scenarios": [
+    {
+      "id": "01-auth-gate-and-session",
+      "title": "Sign-in gate, OTP flow and session persistence",
+      "description": "A signed-out person must not see any operational screen: every product URL lands on the sign-in page, a wrong one-time code is rejected with a visible error, a correct email + OTP signs them in, and the session survives a page reload without asking again.",
+      "approach": "Playwright drives a fresh browser profile with no storage. It visits /incidents, / and a fake incident URL and asserts each redirects to /signin. It then runs the real sign-in UI: the one-time code is captured from the app\u2019s own OTP response (fetch tap), a wrong code is tried first, and after sign-in the page is reloaded to prove the session persists.",
+      "categories": [
+        "Security and permissions",
+        "State and persistence",
+        "Functional UI"
+      ],
+      "status": "pass",
+      "checks": [
+        {
+          "name": "signed-out /incidents is redirected to sign-in",
+          "pass": true,
+          "detail": "http://localhost:5173/signin?next=%2Fincidents"
+        },
+        {
+          "name": "signed-out cockpit is redirected to sign-in",
+          "pass": true,
+          "detail": "http://localhost:5173/signin?next=%2F"
+        },
+        {
+          "name": "signed-out incident page is redirected to sign-in",
+          "pass": true,
+          "detail": "http://localhost:5173/signin?next=%2Fincident%2Fdoes-not-exist"
+        },
+        {
+          "name": "wrong one-time code is rejected with a visible error",
+          "pass": true
+        },
+        {
+          "name": "email + OTP sign-in completes and lands on Incidents",
+          "pass": true,
+          "detail": "http://localhost:5173/incidents"
+        },
+        {
+          "name": "session survives a reload (no repeated sign-in)",
+          "pass": true,
+          "detail": "http://localhost:5173/incidents"
+        }
+      ],
+      "issues": [],
+      "notes": [],
+      "judgeNotes": [
+        "signin-review: skipped \u2014 no judge API key configured"
+      ],
+      "videos": [
+        "C:\\Users\\siddh\\Desktop\\FlytBase Hackathon\\tester\\evaluation\\evidence\\01-auth-gate-and-session\\video\\01-auth-gate-and-session-1.mp4"
+      ],
+      "screenshots": [
+        "evidence\\01-auth-gate-and-session\\01-signin-gate.png",
+        "evidence\\01-auth-gate-and-session\\02-signin-wrong-code.png",
+        "evidence\\01-auth-gate-and-session\\03-signed-in-incidents.png",
+        "evidence\\01-auth-gate-and-session\\04-signin-review.png"
+      ]
+    },
+    {
+      "id": "02-create-join-multiuser",
+      "title": "Create an incident and join a teammate through the secure link",
+      "description": "A commander creates an incident and gets a secret joining link. A teammate opening that link joins in one click, and the commander must see them appear in the responders list immediately, without refreshing.",
+      "approach": "Two independent recorded browser sessions run concurrently. The commander creates the incident through the UI; the joining link is read from the dashboard and opened in the second browser. The test waits (bounded) for the responder to appear in the commander\u2019s participants panel and checks both show presence \"connected\".",
+      "categories": [
+        "End-to-end workflow",
+        "Real-time and multi-user",
+        "Functional UI"
+      ],
+      "status": "pass",
+      "checks": [
+        {
+          "name": "commander creates an incident and lands on its dashboard",
+          "pass": true,
+          "detail": "http://localhost:5173/incident/inc-958-4aac9bf9"
+        },
+        {
+          "name": "a secure joining link is shown to the commander",
+          "pass": true,
+          "detail": "http://localhost:5173/join/9f23fc43cbdcb7d7072db03c"
+        },
+        {
+          "name": "joining link opens a join page that names the incident",
+          "pass": true,
+          "detail": "Dock fire drill \u2014 multi-user"
+        },
+        {
+          "name": "responder appears on the commander\u2019s dashboard without a refresh",
+          "pass": true
+        },
+        {
+          "name": "both participants show as connected in real time",
+          "pass": true,
+          "detail": "2 connected"
+        }
+      ],
+      "issues": [],
+      "notes": [],
+      "judgeNotes": [
+        "multiuser-review: skipped \u2014 no judge API key configured"
+      ],
+      "videos": [
+        "C:\\Users\\siddh\\Desktop\\FlytBase Hackathon\\tester\\evaluation\\evidence\\02-create-join-multiuser\\video\\02-create-join-multiuser-1.mp4",
+        "C:\\Users\\siddh\\Desktop\\FlytBase Hackathon\\tester\\evaluation\\evidence\\02-create-join-multiuser\\video\\02-create-join-multiuser-2.mp4"
+      ],
+      "screenshots": [
+        "evidence\\02-create-join-multiuser\\01-commander-dashboard.png",
+        "evidence\\02-create-join-multiuser\\02-responder-join-page.png",
+        "evidence\\02-create-join-multiuser\\03-commander-sees-responder.png",
+        "evidence\\02-create-join-multiuser\\04-multiuser-review.png"
+      ]
+    },
+    {
+      "id": "03-presence-disconnect",
+      "title": "A dropped teammate shows as disconnected immediately",
+      "description": "When someone\u2019s browser dies, everyone else must see them as disconnected right away \u2014 the shared picture must never silently include people who are gone.",
+      "approach": "Two sessions join the same incident. The responder\u2019s browser context is killed outright, then the test asserts the commander\u2019s panel flips that participant to \"disconnected\" within 12s, and proves the commander page was not reloaded (an in-page marker set before the drop is still set afterwards).",
+      "categories": [
+        "Real-time and multi-user",
+        "Network and recovery"
+      ],
+      "status": "pass",
+      "checks": [
+        {
+          "name": "both participants connected before the drop",
+          "pass": true
+        },
+        {
+          "name": "commander sees the responder drop to disconnected without refreshing",
+          "pass": true
+        },
+        {
+          "name": "commander page was not reloaded to learn about the drop",
+          "pass": true
+        }
+      ],
+      "issues": [],
+      "notes": [],
+      "judgeNotes": [],
+      "videos": [
+        "C:\\Users\\siddh\\Desktop\\FlytBase Hackathon\\tester\\evaluation\\evidence\\03-presence-disconnect\\video\\03-presence-disconnect-1.mp4",
+        "C:\\Users\\siddh\\Desktop\\FlytBase Hackathon\\tester\\evaluation\\evidence\\03-presence-disconnect\\video\\03-presence-disconnect-2.mp4"
+      ],
+      "screenshots": [
+        "evidence\\03-presence-disconnect\\01-responder-disconnected.png"
+      ]
+    },
+    {
+      "id": "04-chat-sync-and-replies",
+      "title": "Team chat: delivery, replies and @mentions",
+      "description": "Messages must reach the other browser within seconds, a reply must visibly quote the message it answers, and a message mentioning a teammate must be highlighted for that teammate.",
+      "approach": "Two recorded sessions chat in one incident. Assertions: message visible on the peer within 6s; a reply renders a quote of the original on the peer; a message containing @Name appears with the mentions-me highlight in the mentioned user\u2019s browser.",
+      "categories": [
+        "Functional UI",
+        "Real-time and multi-user"
+      ],
+      "status": "pass",
+      "checks": [
+        {
+          "name": "message appears on the other browser within seconds, no refresh",
+          "pass": true
+        },
+        {
+          "name": "reply quotes the original message on the other side",
+          "pass": true
+        },
+        {
+          "name": "a message mentioning the responder is visually highlighted for them",
+          "pass": true
+        }
+      ],
+      "issues": [],
+      "notes": [],
+      "judgeNotes": [
+        "chat-review: skipped \u2014 no judge API key configured"
+      ],
+      "videos": [
+        "C:\\Users\\siddh\\Desktop\\FlytBase Hackathon\\tester\\evaluation\\evidence\\04-chat-sync-and-replies\\video\\04-chat-sync-and-replies-1.mp4",
+        "C:\\Users\\siddh\\Desktop\\FlytBase Hackathon\\tester\\evaluation\\evidence\\04-chat-sync-and-replies\\video\\04-chat-sync-and-replies-2.mp4"
+      ],
+      "screenshots": [
+        "evidence\\04-chat-sync-and-replies\\01-chat-thread.png",
+        "evidence\\04-chat-sync-and-replies\\02-chat-mention-highlight.png",
+        "evidence\\04-chat-sync-and-replies\\03-chat-review.png"
+      ]
+    },
+    {
+      "id": "05-drone-command-end-to-end",
+      "title": "Drone workflow: take off, climb, verify against the telemetry stream, land",
+      "description": "The full operator loop: select a drone, take off, watch the status pill go taking_off \u2192 in_flight with altitude actually climbing, cross-check what the screen claims against an independent telemetry listener, then land back to standby.",
+      "approach": "The test runs its own socket.io observer that hears the simulator directly (ground truth). It clicks Take off in the UI, waits through the real state transitions, reads the altitude field, compares the on-screen status against the observer, verifies the drone\u2019s position genuinely changes over 4s (a live object, not a frozen marker), then lands and waits for standby.",
+      "categories": [
+        "Functional UI",
+        "End-to-end workflow",
+        "Map and geospatial",
+        "Telemetry"
+      ],
+      "status": "pass",
+      "checks": [
+        {
+          "name": "takeoff is accepted and the status pill moves to taking_off",
+          "pass": true
+        },
+        {
+          "name": "status reaches in_flight",
+          "pass": true
+        },
+        {
+          "name": "altitude climbs while in flight (user sees numbers, not dashes)",
+          "pass": true,
+          "detail": "altitude RLT = 30.0 m"
+        },
+        {
+          "name": "UI flight status matches the independent telemetry stream",
+          "pass": true,
+          "detail": "observer says in_flight"
+        },
+        {
+          "name": "the drone is genuinely moving (map object should be live, not frozen)",
+          "pass": true,
+          "detail": "{\"latitude\":18.561330666789846,\"longitude\":73.69443469059388} \u2192 {\"latitude\":18.56157600110865,\"longitude\":73.69471221556921}"
+        },
+        {
+          "name": "land returns the drone to standby",
+          "pass": true
+        }
+      ],
+      "issues": [],
+      "notes": [],
+      "judgeNotes": [
+        "flight-review: skipped \u2014 no judge API key configured"
+      ],
+      "videos": [
+        "C:\\Users\\siddh\\Desktop\\FlytBase Hackathon\\tester\\evaluation\\evidence\\05-drone-command-end-to-end\\video\\05-drone-command-end-to-end-1.mp4"
+      ],
+      "screenshots": [
+        "evidence\\05-drone-command-end-to-end\\01-in-flight.png",
+        "evidence\\05-drone-command-end-to-end\\02-flight-review.png"
+      ]
+    },
+    {
+      "id": "06-telemetry-freshness-honesty",
+      "title": "The dashboard must say when data is delayed or stale",
+      "description": "Under a slow network or a dead simulator, on-screen numbers stop being trustworthy. The freshness indicator must downgrade from live \u2192 delayed \u2192 stale and recover, so responders never mistake old data for current.",
+      "approach": "Using the product\u2019s own fault-injection API (the documented way to simulate bad networks): a 2.5s telemetry delay must flip the selected drone\u2019s freshness badge to \"delayed\"; clearing it returns \"live\"; stopping the simulator must show \"stale\" within 25s; recovery returns \"live\". Screenshots capture each state.",
+      "categories": [
+        "Telemetry",
+        "Network and recovery",
+        "Usability"
+      ],
+      "status": "pass",
+      "checks": [
+        {
+          "name": "freshness starts as live",
+          "pass": true,
+          "detail": "live"
+        },
+        {
+          "name": "under a delayed network the badge honestly shows delayed (not live)",
+          "pass": true
+        },
+        {
+          "name": "badge returns to live once the network recovers",
+          "pass": true
+        },
+        {
+          "name": "when the simulator stops, the UI shows stale instead of pretending the data is current",
+          "pass": true
+        },
+        {
+          "name": "UI recovers to live when telemetry resumes",
+          "pass": true
+        }
+      ],
+      "issues": [],
+      "notes": [],
+      "judgeNotes": [
+        "freshness-review: skipped \u2014 no judge API key configured"
+      ],
+      "videos": [
+        "C:\\Users\\siddh\\Desktop\\FlytBase Hackathon\\tester\\evaluation\\evidence\\06-telemetry-freshness-honesty\\video\\06-telemetry-freshness-honesty-1.mp4"
+      ],
+      "screenshots": [
+        "evidence\\06-telemetry-freshness-honesty\\01-freshness-live.png",
+        "evidence\\06-telemetry-freshness-honesty\\02-freshness-delayed.png",
+        "evidence\\06-telemetry-freshness-honesty\\03-freshness-stale.png",
+        "evidence\\06-telemetry-freshness-honesty\\04-freshness-review.png"
+      ]
+    },
+    {
+      "id": "07-video-liveness-and-failure",
+      "title": "Video is genuinely playing, survives a source switch, and admits failure",
+      "description": "A \"live\" label must mean moving pixels; switching drones must switch the actual feed; a dropped stream must not keep looking live; and everything must recover.",
+      "approach": "The test samples the <video> element onto a canvas 2.5s apart and compares pixels \u2014 identical frames while labelled \"live\" would be a defect. It switches to Drone 2 and repeats. It then injects a 12s video-freeze fault: frames must stop, the label must stop saying \"live\" during the freeze, and playback must return after the fault clears.",
+      "categories": [
+        "Video and media",
+        "Network and recovery",
+        "Visual UI"
+      ],
+      "status": "pass",
+      "checks": [
+        {
+          "name": "video tile reaches live",
+          "pass": true
+        },
+        {
+          "name": "pixels actually change while the label says live (not a frozen frame)",
+          "pass": true
+        },
+        {
+          "name": "after switching drones the video still plays",
+          "pass": true
+        },
+        {
+          "name": "label still reads live after the switch",
+          "pass": true
+        },
+        {
+          "name": "frames stop while the stream is frozen",
+          "pass": true,
+          "detail": "two samples 2.5s apart are identical or unavailable"
+        },
+        {
+          "name": "the UI does not keep claiming live during the freeze",
+          "pass": true,
+          "detail": "label = reconnecting"
+        },
+        {
+          "name": "stream recovers to playing after the fault window",
+          "pass": true
+        }
+      ],
+      "issues": [],
+      "notes": [],
+      "judgeNotes": [
+        "video-review: skipped \u2014 no judge API key configured"
+      ],
+      "videos": [
+        "C:\\Users\\siddh\\Desktop\\FlytBase Hackathon\\tester\\evaluation\\evidence\\07-video-liveness-and-failure\\video\\07-video-liveness-and-failure-1.mp4"
+      ],
+      "screenshots": [
+        "evidence\\07-video-liveness-and-failure\\01-video-live.png",
+        "evidence\\07-video-liveness-and-failure\\02-video-frozen.png",
+        "evidence\\07-video-liveness-and-failure\\03-video-review.png"
+      ]
+    },
+    {
+      "id": "08-responsive-phone-usability",
+      "title": "Phone-width layout keeps every critical action usable",
+      "description": "At 390\u00d7844 the sign-in, the chat input and the drone controls must all be visible or reachable by scrolling \u2014 a workflow that works on a laptop but loses its main action on a phone is a defect.",
+      "approach": "A session with a 390\u00d7844 viewport runs the real sign-in and opens an incident dashboard. The test measures horizontal overflow on each screen, scrolls to and bounding-boxes the chat input and the Take off button, and confirms a responder correctly has no \"End incident\" control.",
+      "categories": [
+        "Responsive UI",
+        "Usability",
+        "Visual UI"
+      ],
+      "status": "pass",
+      "checks": [
+        {
+          "name": "sign-in fits a 390px phone without horizontal scroll",
+          "pass": true,
+          "detail": "overflow = 1px"
+        },
+        {
+          "name": "incident dashboard has no horizontal overflow at phone width",
+          "pass": true,
+          "detail": "overflow = 0px"
+        },
+        {
+          "name": "chat input is reachable on the phone",
+          "pass": true,
+          "detail": "{\"x\":21,\"y\":787.390625,\"width\":283.3125,\"height\":35.59375}"
+        },
+        {
+          "name": "takeoff action is reachable on the phone (main action not pushed off screen)",
+          "pass": true,
+          "detail": "{\"x\":10,\"y\":241.046875,\"width\":181,\"height\":37.59375}"
+        },
+        {
+          "name": "responder correctly cannot see the end-incident control",
+          "pass": true
+        }
+      ],
+      "issues": [],
+      "notes": [],
+      "judgeNotes": [
+        "mobile-review: skipped \u2014 no judge API key configured"
+      ],
+      "videos": [
+        "C:\\Users\\siddh\\Desktop\\FlytBase Hackathon\\tester\\evaluation\\evidence\\08-responsive-phone-usability\\video\\08-responsive-phone-usability-1.mp4"
+      ],
+      "screenshots": [
+        "evidence\\08-responsive-phone-usability\\01-mobile-signin.png",
+        "evidence\\08-responsive-phone-usability\\02-mobile-dashboard.png",
+        "evidence\\08-responsive-phone-usability\\03-mobile-review.png"
+      ]
+    },
+    {
+      "id": "09-security-and-permissions-api",
+      "title": "API surface refuses anonymous, forged, and over-privileged requests",
+      "description": "Every incident API must reject anonymous callers and forged tokens; a fabricated joining link must fail; a responder must not be able to end someone else\u2019s incident; an ended incident must refuse writes; and a signed-out session must lose access.",
+      "approach": "Two layers: direct HTTP probes of the running product (anonymous GETs expect 401, forged bearer token 401, bad join token 404, responder ending a commander\u2019s incident 403, chat after end 409, access after logout 401) \u2014 and the same seven probes re-run live inside a recorded browser against a probe console, so the video shows each request being refused in real time.",
+      "categories": [
+        "Security and permissions",
+        "API and data"
+      ],
+      "status": "pass",
+      "checks": [
+        {
+          "name": "incidents API rejects anonymous callers (401)",
+          "pass": true,
+          "detail": "401"
+        },
+        {
+          "name": "history API rejects anonymous callers (401)",
+          "pass": true,
+          "detail": "401"
+        },
+        {
+          "name": "a fabricated joining link is rejected (404)",
+          "pass": true,
+          "detail": "404"
+        },
+        {
+          "name": "a forged session token is rejected (401)",
+          "pass": true,
+          "detail": "401"
+        },
+        {
+          "name": "responder can join with a genuine link/token",
+          "pass": true,
+          "detail": "200"
+        },
+        {
+          "name": "a responder cannot end someone else\u2019s incident (403)",
+          "pass": true,
+          "detail": "403"
+        },
+        {
+          "name": "another incident can be created by the responder (isolation sanity)",
+          "pass": true
+        },
+        {
+          "name": "writing into an ended incident is rejected (409)",
+          "pass": true,
+          "detail": "409"
+        },
+        {
+          "name": "a revoked session no longer grants access (401)",
+          "pass": true,
+          "detail": "after logout: 401"
+        },
+        {
+          "name": "all seven in-browser probes were refused exactly as designed",
+          "pass": true,
+          "detail": "401,401,401,404,403,409,401"
+        }
+      ],
+      "issues": [],
+      "notes": [],
+      "judgeNotes": [],
+      "videos": [
+        "C:\\Users\\siddh\\Desktop\\FlytBase Hackathon\\tester\\evaluation\\evidence\\09-security-and-permissions-api\\video\\09-security-and-permissions-api-1.mp4"
+      ],
+      "screenshots": [
+        "evidence\\09-security-and-permissions-api\\01-probe-console-results.png"
+      ]
+    },
+    {
+      "id": "10-history-audit-trail",
+      "title": "A closed incident leaves a complete, attributed, read-only history",
+      "description": "After an incident ends, the timeline must show who joined, what was said (attributed), what was marked on the map, which drone commands were sent, and when it ended \u2014 and the closed incident must refuse new writes.",
+      "approach": "A scripted incident generates a known event sequence (chat from two people, a map observation, a takeoff/land command issued from the incident dashboard). The commander ends it via the UI; the test verifies the read-only banner and missing inputs, then opens the history page and asserts each expected event is present, attributed and ordered, with the read-only marker shown.",
+      "categories": [
+        "Audit and history",
+        "State and persistence",
+        "End-to-end workflow"
+      ],
+      "status": "pass",
+      "checks": [
+        {
+          "name": "commander sees the incident is now ended and the dashboard is read-only",
+          "pass": true
+        },
+        {
+          "name": "chat input is removed after the incident ends",
+          "pass": true
+        },
+        {
+          "name": "history records who joined",
+          "pass": true,
+          "detail": "14:04:00\ud83d\udea8Incident \"Audit trail drill\" created (fire) | 14:04:00\ud83d\udfe2Nia is connected | 14:04:00\u2795Omar joined the incident | 14:04:00\ud83d\udfe2Omar is connected | 14:04:05\ud83d\udcacNia: First message for the record | 14:"
+        },
+        {
+          "name": "history records both chat messages attributed to their authors",
+          "pass": true,
+          "detail": "2 chat events"
+        },
+        {
+          "name": "history records the map observation",
+          "pass": true
+        },
+        {
+          "name": "history records the drone command issued from the control surface",
+          "pass": true
+        },
+        {
+          "name": "history records the end of the incident",
+          "pass": true
+        },
+        {
+          "name": "closed history is explicitly read-only",
+          "pass": true
+        }
+      ],
+      "issues": [],
+      "notes": [],
+      "judgeNotes": [
+        "history-review: skipped \u2014 no judge API key configured"
+      ],
+      "videos": [
+        "C:\\Users\\siddh\\Desktop\\FlytBase Hackathon\\tester\\evaluation\\evidence\\10-history-audit-trail\\video\\10-history-audit-trail-1.mp4",
+        "C:\\Users\\siddh\\Desktop\\FlytBase Hackathon\\tester\\evaluation\\evidence\\10-history-audit-trail\\video\\10-history-audit-trail-2.mp4"
+      ],
+      "screenshots": [
+        "evidence\\10-history-audit-trail\\01-history-timeline.png",
+        "evidence\\10-history-audit-trail\\02-history-review.png"
+      ]
+    },
+    {
+      "id": "11-shared-map-and-location",
+      "title": "Shared map state: teammate locations and observations sync live",
+      "description": "A responder sharing their location must appear with coordinates on the commander\u2019s screen, and a map observation must appear for everyone without a refresh \u2014 the map is the shared picture of the incident.",
+      "approach": "Two sessions; the commander\u2019s browser is granted a synthetic geolocation and toggles location sharing on. The test waits for coordinates to render in the responder\u2019s participants panel, then adds a marker via the UI and asserts it appears in the teammate\u2019s observation list within 8s.",
+      "categories": [
+        "Map and geospatial",
+        "Real-time and multi-user"
+      ],
+      "status": "pass",
+      "checks": [
+        {
+          "name": "location sharing appears on the teammate\u2019s screen with coordinates",
+          "pass": true,
+          "detail": "@ 18.56210, 73.69650"
+        },
+        {
+          "name": "a map observation appears on the teammate\u2019s screen without refresh",
+          "pass": true
+        }
+      ],
+      "issues": [],
+      "notes": [],
+      "judgeNotes": [
+        "map-review: skipped \u2014 no judge API key configured"
+      ],
+      "videos": [
+        "C:\\Users\\siddh\\Desktop\\FlytBase Hackathon\\tester\\evaluation\\evidence\\11-shared-map-and-location\\video\\11-shared-map-and-location-1.mp4",
+        "C:\\Users\\siddh\\Desktop\\FlytBase Hackathon\\tester\\evaluation\\evidence\\11-shared-map-and-location\\video\\11-shared-map-and-location-2.mp4"
+      ],
+      "screenshots": [
+        "evidence\\11-shared-map-and-location\\01-location-shared.png",
+        "evidence\\11-shared-map-and-location\\02-observation-shared.png",
+        "evidence\\11-shared-map-and-location\\03-map-review.png"
+      ]
+    }
+  ],
+  "mutations": [
+    {
+      "id": "M1-signin-button-removed",
+      "title": "Sign-in button removed from the login page",
+      "mutation": "The submit button is hidden while the email and OTP fields remain, so the user can no longer sign in (the brief\u2019s first example mutation).",
+      "detector": "auth-gate: a real user must be able to complete email + OTP sign-in through the UI.",
+      "detected": true,
+      "detail": "with a valid code entered, no way to submit: sign-in is impossible",
+      "video": "C:\\Users\\siddh\\Desktop\\FlytBase Hackathon\\tester\\evaluation\\evidence\\mutations\\M1-signin-button-removed.mp4"
+    },
+    {
+      "id": "M2-main-action-offscreen-phone",
+      "title": "Main drone action pushed off screen at phone width",
+      "mutation": "A CSS change pushes the Take off command off the visible area at phone width (the brief\u2019s third example mutation).",
+      "detector": "responsive: at 390px the takeoff control must be inside the viewport and usable.",
+      "detected": true,
+      "detail": "takeoff control sits at x=-600 \u2014 completely off screen on a phone",
+      "video": "C:\\Users\\siddh\\Desktop\\FlytBase Hackathon\\tester\\evaluation\\evidence\\mutations\\M2-main-action-offscreen-phone.mp4"
+    },
+    {
+      "id": "M3-auth-guard-removed",
+      "title": "Signed-out user can open protected pages",
+      "mutation": "The route guard that redirects signed-out users is disabled, letting anyone open operational pages (the brief\u2019s fourth example mutation).",
+      "detector": "security: with empty storage, /incidents must redirect to the sign-in page.",
+      "detected": true,
+      "detail": "signed-out visit lands on http://localhost:5173/incidents \u2014 protected content exposed",
+      "video": "C:\\Users\\siddh\\Desktop\\FlytBase Hackathon\\tester\\evaluation\\evidence\\mutations\\M3-auth-guard-removed.mp4"
+    },
+    {
+      "id": "M4-dead-stream-still-live",
+      "title": "A frozen video stream keeps its live label",
+      "mutation": "The video tile is changed to always display \"live\", so a dropped or frozen stream still looks live to the operator.",
+      "detector": "video-liveness: while frames are not advancing, the label must not claim the feed is live.",
+      "detected": true,
+      "detail": "frames are frozen but the tile still reads \"live\" \u2014 operator would trust a dead feed",
+      "video": "C:\\Users\\siddh\\Desktop\\FlytBase Hackathon\\tester\\evaluation\\evidence\\mutations\\M4-dead-stream-still-live.mp4"
+    },
+    {
+      "id": "clean-control/M1-signin-button-removed",
+      "title": "Sign-in button removed from the login page \u2014 clean build control",
+      "mutation": "none (clean build)",
+      "detector": "auth-gate: a real user must be able to complete email + OTP sign-in through the UI.",
+      "detected": false,
+      "detail": "sign-in submit button still reachable \u2014 flow can complete"
+    },
+    {
+      "id": "clean-control/M2-main-action-offscreen-phone",
+      "title": "Main drone action pushed off screen at phone width \u2014 clean build control",
+      "mutation": "none (clean build)",
+      "detector": "responsive: at 390px the takeoff control must be inside the viewport and usable.",
+      "detected": false,
+      "detail": "takeoff control visible at x=10"
+    },
+    {
+      "id": "clean-control/M3-auth-guard-removed",
+      "title": "Signed-out user can open protected pages \u2014 clean build control",
+      "mutation": "none (clean build)",
+      "detector": "security: with empty storage, /incidents must redirect to the sign-in page.",
+      "detected": false,
+      "detail": "signed-out visit still redirects to sign-in"
+    },
+    {
+      "id": "clean-control/M4-dead-stream-still-live",
+      "title": "A frozen video stream keeps its live label \u2014 clean build control",
+      "mutation": "none (clean build)",
+      "detector": "video-liveness: while frames are not advancing, the label must not claim the feed is live.",
+      "detected": false,
+      "detail": "frozen=true, label=reconnecting"
+    }
+  ]
+}

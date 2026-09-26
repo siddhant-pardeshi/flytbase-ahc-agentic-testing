@@ -1,0 +1,7 @@
+{
+  "scenarios": 11,
+  "checks": "59/60 passed",
+  "issuesFound": 0,
+  "mutationsCaught": "4 caught, 0 false positives on clean build",
+  "report": "C:\\Users\\siddh\\Desktop\\FlytBase Hackathon\\tester\\evaluation\\EVALUATION.md"
+}

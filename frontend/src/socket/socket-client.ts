@@ -12,14 +12,17 @@ export class SocketClient {
   status: SocketStatus = 'disconnected';
 
   private socket: Socket | null = null;
+  private extraAuth: Record<string, unknown> | null = null;
   private handlers = new Map<string, Set<Handler>>();
+  private listeners = new Map<string, Set<Handler>>();
   private statusListeners = new Set<(s: SocketStatus) => void>();
 
-  connect(url: string, orgId: string): void {
+  connect(url: string, orgId: string, extraAuth?: Record<string, unknown>): void {
+    if (extraAuth) this.extraAuth = extraAuth;
     if (this.socket) this.disconnect();
     this.setStatus('connecting');
     const socket = io(url, {
-      auth: { 'org-id': orgId },
+      auth: { 'org-id': orgId, ...(this.extraAuth ?? {}) },
       reconnection: true,
       reconnectionDelay: 1000,
       reconnectionDelayMax: 5000,
@@ -62,8 +65,9 @@ export class SocketClient {
 
     socket.onAny((event: string, payload: unknown) => {
       const set = this.handlers.get(event);
-      if (!set) return;
-      for (const h of set) h(payload);
+      if (set) for (const h of set) h(payload);
+      const listeners = this.listeners.get(event);
+      if (listeners) for (const h of listeners) h(payload);
     });
   }
 
@@ -73,7 +77,43 @@ export class SocketClient {
       this.socket.disconnect();
       this.socket = null;
     }
+    this.extraAuth = null;
     this.setStatus('disconnected');
+  }
+
+  /**
+   * Listen to a plain server event without subscribing to a topic (used for
+   * incident room broadcasts such as participant video frames).
+   */
+  on(event: string, handler: Handler): () => void {
+    let set = this.listeners.get(event);
+    if (!set) {
+      set = new Set();
+      this.listeners.set(event, set);
+    }
+    set.add(handler);
+    return () => {
+      this.listeners.get(event)?.delete(handler);
+    };
+  }
+
+  emit(event: string, payload?: unknown): void {
+    this.socket?.emit(event, payload);
+  }
+
+  /** Emit and wait for the server acknowledgement (commands). */
+  emitWithAck<T>(event: string, payload: unknown, timeoutMs = 5000): Promise<T> {
+    return new Promise((resolve, reject) => {
+      if (!this.socket?.connected) {
+        reject(new Error('socket is not connected'));
+        return;
+      }
+      const timer = setTimeout(() => reject(new Error('the command timed out')), timeoutMs);
+      this.socket.emit(event, payload, (ack: T) => {
+        clearTimeout(timer);
+        resolve(ack);
+      });
+    });
   }
 
   onStatus(cb: (s: SocketStatus) => void): () => void {
