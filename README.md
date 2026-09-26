@@ -48,7 +48,7 @@ Each scenario below was executed against the running product; the video shows it
 
 **Approach.** Playwright drives a fresh browser profile with no storage. It visits /incidents, / and a fake incident URL and asserts each redirects to /signin. It then runs the real sign-in UI: the one-time code is captured from the app’s own OTP response (fetch tap), a wrong code is tried first, and after sign-in the page is reloaded to prove the session persists.
 
-**Video.** [01-auth-gate-and-session-1.mp4](https://drive.google.com/drive/folders/1zScppxBViCQ4jaNEU89lUIFVGiVV12l7?usp=sharing — file: 01-auth-gate-and-session-1.mp4)
+**Video.** [01-auth-gate-and-session-1.mp4](https://drive.google.com/drive/folders/1vtI0khuELS919wlRrDGt9pE2YK-Sws7T?usp=sharing — file: 01-auth-gate-and-session-1.mp4)
 
 <details><summary>Vision judge notes</summary>
 
@@ -75,7 +75,7 @@ Each scenario below was executed against the running product; the video shows it
 
 **Approach.** Two independent recorded browser sessions run concurrently. The commander creates the incident through the UI; the joining link is read from the dashboard and opened in the second browser. The test waits (bounded) for the responder to appear in the commander’s participants panel and checks both show presence "connected".
 
-**Video.** [02-create-join-multiuser-1.mp4](https://drive.google.com/drive/folders/1zScppxBViCQ4jaNEU89lUIFVGiVV12l7?usp=sharing — file: 02-create-join-multiuser-1.mp4) · [02-create-join-multiuser-2.mp4](https://drive.google.com/drive/folders/1zScppxBViCQ4jaNEU89lUIFVGiVV12l7?usp=sharing — file: 02-create-join-multiuser-2.mp4)
+**Video.** [02-create-join-multiuser-1.mp4](https://drive.google.com/drive/folders/1vtI0khuELS919wlRrDGt9pE2YK-Sws7T?usp=sharing — file: 02-create-join-multiuser-1.mp4) · [02-create-join-multiuser-2.mp4](https://drive.google.com/drive/folders/1vtI0khuELS919wlRrDGt9pE2YK-Sws7T?usp=sharing — file: 02-create-join-multiuser-2.mp4)
 
 <details><summary>Vision judge notes</summary>
 
@@ -101,7 +101,7 @@ Each scenario below was executed against the running product; the video shows it
 
 **Approach.** Two sessions join the same incident. The responder’s browser context is killed outright, then the test asserts the commander’s panel flips that participant to "disconnected" within 12s, and proves the commander page was not reloaded (an in-page marker set before the drop is still set afterwards).
 
-**Video.** [03-presence-disconnect-1.mp4](https://drive.google.com/drive/folders/1zScppxBViCQ4jaNEU89lUIFVGiVV12l7?usp=sharing — file: 03-presence-disconnect-1.mp4) · [03-presence-disconnect-2.mp4](https://drive.google.com/drive/folders/1zScppxBViCQ4jaNEU89lUIFVGiVV12l7?usp=sharing — file: 03-presence-disconnect-2.mp4)
+**Video.** [03-presence-disconnect-1.mp4](https://drive.google.com/drive/folders/1vtI0khuELS919wlRrDGt9pE2YK-Sws7T?usp=sharing — file: 03-presence-disconnect-1.mp4) · [03-presence-disconnect-2.mp4](https://drive.google.com/drive/folders/1vtI0khuELS919wlRrDGt9pE2YK-Sws7T?usp=sharing — file: 03-presence-disconnect-2.mp4)
 
 <details><summary>Checks executed</summary>
 
@@ -119,7 +119,7 @@ Each scenario below was executed against the running product; the video shows it
 
 **Approach.** Two recorded sessions chat in one incident. Assertions: message visible on the peer within 6s; a reply renders a quote of the original on the peer; a message containing @Name appears with the mentions-me highlight in the mentioned user’s browser.
 
-**Video.** [04-chat-sync-and-replies-1.mp4](https://drive.google.com/drive/folders/1zScppxBViCQ4jaNEU89lUIFVGiVV12l7?usp=sharing — file: 04-chat-sync-and-replies-1.mp4) · [04-chat-sync-and-replies-2.mp4](https://drive.google.com/drive/folders/1zScppxBViCQ4jaNEU89lUIFVGiVV12l7?usp=sharing — file: 04-chat-sync-and-replies-2.mp4)
+**Video.** [04-chat-sync-and-replies-1.mp4](https://drive.google.com/drive/folders/1vtI0khuELS919wlRrDGt9pE2YK-Sws7T?usp=sharing — file: 04-chat-sync-and-replies-1.mp4) · [04-chat-sync-and-replies-2.mp4](https://drive.google.com/drive/folders/1vtI0khuELS919wlRrDGt9pE2YK-Sws7T?usp=sharing — file: 04-chat-sync-and-replies-2.mp4)
 
 <details><summary>Vision judge notes</summary>
 
@@ -143,7 +143,7 @@ Each scenario below was executed against the running product; the video shows it
 
 **Approach.** The test runs its own socket.io observer that hears the simulator directly (ground truth). It clicks Take off in the UI, waits through the real state transitions, reads the altitude field, compares the on-screen status against the observer, verifies the drone’s position genuinely changes over 4s (a live object, not a frozen marker), then lands and waits for standby.
 
-**Video.** [05-drone-command-end-to-end-1.mp4](https://drive.google.com/drive/folders/1zScppxBViCQ4jaNEU89lUIFVGiVV12l7?usp=sharing — file: 05-drone-command-end-to-end-1.mp4)
+**Video.** [05-drone-command-end-to-end-1.mp4](https://drive.google.com/drive/folders/1vtI0khuELS919wlRrDGt9pE2YK-Sws7T?usp=sharing — file: 05-drone-command-end-to-end-1.mp4)
 
 <details><summary>Vision judge notes</summary>
 
@@ -170,7 +170,7 @@ Each scenario below was executed against the running product; the video shows it
 
 **Approach.** Using the product’s own fault-injection API (the documented way to simulate bad networks): a 2.5s telemetry delay must flip the selected drone’s freshness badge to "delayed"; clearing it returns "live"; stopping the simulator must show "stale" within 25s; recovery returns "live". Screenshots capture each state.
 
-**Video.** [06-telemetry-freshness-honesty-1.mp4](https://drive.google.com/drive/folders/1zScppxBViCQ4jaNEU89lUIFVGiVV12l7?usp=sharing — file: 06-telemetry-freshness-honesty-1.mp4)
+**Video.** [06-telemetry-freshness-honesty-1.mp4](https://drive.google.com/drive/folders/1vtI0khuELS919wlRrDGt9pE2YK-Sws7T?usp=sharing — file: 06-telemetry-freshness-honesty-1.mp4)
 
 <details><summary>Vision judge notes</summary>
 
@@ -196,7 +196,7 @@ Each scenario below was executed against the running product; the video shows it
 
 **Approach.** The test samples the <video> element onto a canvas 2.5s apart and compares pixels — identical frames while labelled "live" would be a defect. It switches to Drone 2 and repeats. It then injects a 12s video-freeze fault: frames must stop, the label must stop saying "live" during the freeze, and playback must return after the fault clears.
 
-**Video.** [07-video-liveness-and-failure-1.mp4](https://drive.google.com/drive/folders/1zScppxBViCQ4jaNEU89lUIFVGiVV12l7?usp=sharing — file: 07-video-liveness-and-failure-1.mp4)
+**Video.** [07-video-liveness-and-failure-1.mp4](https://drive.google.com/drive/folders/1vtI0khuELS919wlRrDGt9pE2YK-Sws7T?usp=sharing — file: 07-video-liveness-and-failure-1.mp4)
 
 <details><summary>Vision judge notes</summary>
 
@@ -224,7 +224,7 @@ Each scenario below was executed against the running product; the video shows it
 
 **Approach.** A session with a 390×844 viewport runs the real sign-in and opens an incident dashboard. The test measures horizontal overflow on each screen, scrolls to and bounding-boxes the chat input and the Take off button, and confirms a responder correctly has no "End incident" control.
 
-**Video.** [08-responsive-phone-usability-1.mp4](https://drive.google.com/drive/folders/1zScppxBViCQ4jaNEU89lUIFVGiVV12l7?usp=sharing — file: 08-responsive-phone-usability-1.mp4)
+**Video.** [08-responsive-phone-usability-1.mp4](https://drive.google.com/drive/folders/1vtI0khuELS919wlRrDGt9pE2YK-Sws7T?usp=sharing — file: 08-responsive-phone-usability-1.mp4)
 
 <details><summary>Vision judge notes</summary>
 
@@ -250,7 +250,7 @@ Each scenario below was executed against the running product; the video shows it
 
 **Approach.** Two layers: direct HTTP probes of the running product (anonymous GETs expect 401, forged bearer token 401, bad join token 404, responder ending a commander’s incident 403, chat after end 409, access after logout 401) — and the same seven probes re-run live inside a recorded browser against a probe console, so the video shows each request being refused in real time.
 
-**Video.** [09-security-and-permissions-api-1.mp4](https://drive.google.com/drive/folders/1zScppxBViCQ4jaNEU89lUIFVGiVV12l7?usp=sharing — file: 09-security-and-permissions-api-1.mp4)
+**Video.** [09-security-and-permissions-api-1.mp4](https://drive.google.com/drive/folders/1vtI0khuELS919wlRrDGt9pE2YK-Sws7T?usp=sharing — file: 09-security-and-permissions-api-1.mp4)
 
 <details><summary>Checks executed</summary>
 
@@ -275,7 +275,7 @@ Each scenario below was executed against the running product; the video shows it
 
 **Approach.** A scripted incident generates a known event sequence (chat from two people, a map observation, a takeoff/land command issued from the incident dashboard). The commander ends it via the UI; the test verifies the read-only banner and missing inputs, then opens the history page and asserts each expected event is present, attributed and ordered, with the read-only marker shown.
 
-**Video.** [10-history-audit-trail-1.mp4](https://drive.google.com/drive/folders/1zScppxBViCQ4jaNEU89lUIFVGiVV12l7?usp=sharing — file: 10-history-audit-trail-1.mp4) · [10-history-audit-trail-2.mp4](https://drive.google.com/drive/folders/1zScppxBViCQ4jaNEU89lUIFVGiVV12l7?usp=sharing — file: 10-history-audit-trail-2.mp4)
+**Video.** [10-history-audit-trail-1.mp4](https://drive.google.com/drive/folders/1vtI0khuELS919wlRrDGt9pE2YK-Sws7T?usp=sharing — file: 10-history-audit-trail-1.mp4) · [10-history-audit-trail-2.mp4](https://drive.google.com/drive/folders/1vtI0khuELS919wlRrDGt9pE2YK-Sws7T?usp=sharing — file: 10-history-audit-trail-2.mp4)
 
 <details><summary>Vision judge notes</summary>
 
@@ -304,7 +304,7 @@ Each scenario below was executed against the running product; the video shows it
 
 **Approach.** Two sessions; the commander’s browser is granted a synthetic geolocation and toggles location sharing on. The test waits for coordinates to render in the responder’s participants panel, then adds a marker via the UI and asserts it appears in the teammate’s observation list within 8s.
 
-**Video.** [11-shared-map-and-location-1.mp4](https://drive.google.com/drive/folders/1zScppxBViCQ4jaNEU89lUIFVGiVV12l7?usp=sharing — file: 11-shared-map-and-location-1.mp4) · [11-shared-map-and-location-2.mp4](https://drive.google.com/drive/folders/1zScppxBViCQ4jaNEU89lUIFVGiVV12l7?usp=sharing — file: 11-shared-map-and-location-2.mp4)
+**Video.** [11-shared-map-and-location-1.mp4](https://drive.google.com/drive/folders/1vtI0khuELS919wlRrDGt9pE2YK-Sws7T?usp=sharing — file: 11-shared-map-and-location-1.mp4) · [11-shared-map-and-location-2.mp4](https://drive.google.com/drive/folders/1vtI0khuELS919wlRrDGt9pE2YK-Sws7T?usp=sharing — file: 11-shared-map-and-location-2.mp4)
 
 <details><summary>Vision judge notes</summary>
 
