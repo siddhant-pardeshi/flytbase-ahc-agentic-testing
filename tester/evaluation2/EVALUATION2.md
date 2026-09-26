@@ -47,7 +47,7 @@ So this level of **SentiNEL** measures performance where the user experiences it
 
 **Approach.** Load is generated through documented surfaces only: the control API adds real simulator drones (each a full state machine publishing position at 2 Hz plus heartbeat, battery, flight and attitude), then multiplies simulation time ×6 so every machine ticks faster — thousands of telemetry messages per second through the same socket pipeline the browser drinks from. In-page probes sample FPS, long tasks, DOM size and JS heap. Time-to-Glass is measured two ways: API-return → device row visible, and command-click → alert toast visible under peak load. The vision judge reviews map screenshots for functional (not pretty) degradation.
 
-**Video.** [ava-1.mp4](<VIDEO_LINK:ava-1.mp4>)
+**Video.** [L2-1-telemetry-avalanche.mp4](<VIDEO_LINK:L2-1-telemetry-avalanche.mp4>)
 
 <details><summary>Vision judge notes</summary>
 
@@ -78,7 +78,7 @@ So this level of **SentiNEL** measures performance where the user experiences it
 
 **Approach.** 30 users are created and joined through the public REST API, then connected as presence-carrying socket clients using the same handshake the dashboard uses (30 clients + the commander’s browser = 31 sockets). A single server-side socket-kick fault drops them all simultaneously; clients auto-reconnect with jittered delays, producing a genuine reconnect storm. Recovery time is measured from kick to the moment the commander’s panel shows every participant connected again; DOM rows are diffed against unique participant identities to catch duplicates and ghosts; the vision judge inspects the panel.
 
-**Video.** [ben-1.mp4](<VIDEO_LINK:ben-1.mp4>)
+**Video.** [L2-2-thundering-herd-reconnect.mp4](<VIDEO_LINK:L2-2-thundering-herd-reconnect.mp4>)
 
 <details><summary>Vision judge notes</summary>
 
@@ -104,7 +104,7 @@ So this level of **SentiNEL** measures performance where the user experiences it
 
 **Approach.** 300 messages are flooded through the public chat API from three participants while the dashboard is open. In-page probes measure DOM node growth and JS heap before/after; the test verifies all 300 messages render (none lost), hammers the chat scroll, and asserts the newest message remains reachable. The vision judge then inspects the flooded panel for visual truncation or broken layout. Linear DOM growth is reported honestly as a scalability finding (no list virtualization) rather than a false defect.
 
-**Video.** [cara-1.mp4](<VIDEO_LINK:cara-1.mp4>)
+**Video.** [L2-3-resource-starvation.mp4](<VIDEO_LINK:L2-3-resource-starvation.mp4>)
 
 <details><summary>Vision judge notes</summary>
 

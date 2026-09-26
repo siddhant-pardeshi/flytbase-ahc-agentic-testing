@@ -3,9 +3,9 @@
   "scenarios": [
     {
       "id": "L2-1-telemetry-avalanche",
-      "title": "The Telemetry Avalanche — visual degradation under a data flood",
-      "description": "A responder watching 24 drones at 6× simulation speed must still get a usable map, live device list and actionable alerts. A backend load test would report \"API latency fine\" here; the real risk is the browser: render loop starvation, main-thread lockups, and commands that stop reaching the glass.",
-      "approach": "Load is generated through documented surfaces only: the control API adds real simulator drones (each a full state machine publishing position at 2 Hz plus heartbeat, battery, flight and attitude), then multiplies simulation time ×6 so every machine ticks faster — thousands of telemetry messages per second through the same socket pipeline the browser drinks from. In-page probes sample FPS, long tasks, DOM size and JS heap. Time-to-Glass is measured two ways: API-return → device row visible, and command-click → alert toast visible under peak load. The vision judge reviews map screenshots for functional (not pretty) degradation.",
+      "title": "The Telemetry Avalanche \u2014 visual degradation under a data flood",
+      "description": "A responder watching 24 drones at 6\u00d7 simulation speed must still get a usable map, live device list and actionable alerts. A backend load test would report \"API latency fine\" here; the real risk is the browser: render loop starvation, main-thread lockups, and commands that stop reaching the glass.",
+      "approach": "Load is generated through documented surfaces only: the control API adds real simulator drones (each a full state machine publishing position at 2 Hz plus heartbeat, battery, flight and attitude), then multiplies simulation time \u00d76 so every machine ticks faster \u2014 thousands of telemetry messages per second through the same socket pipeline the browser drinks from. In-page probes sample FPS, long tasks, DOM size and JS heap. Time-to-Glass is measured two ways: API-return \u2192 device row visible, and command-click \u2192 alert toast visible under peak load. The vision judge reviews map screenshots for functional (not pretty) degradation.",
       "categories": [
         "Performance",
         "Visual UI",
@@ -48,10 +48,10 @@
         "post-peak: {\"fps\":9,\"longTasks\":0,\"longestTaskMs\":0,\"domNodes\":314,\"heapMB\":51}"
       ],
       "judgeNotes": [
-        "avalanche-review: skipped — no judge API key configured"
+        "avalanche-review: skipped \u2014 no judge API key configured"
       ],
       "videos": [
-        "C:\\Users\\siddh\\Desktop\\FlytBase Hackathon\\tester\\evaluation2\\evidence\\L2-1-telemetry-avalanche\\video\\ava-1.mp4"
+        "C:\\Users\\siddh\\Desktop\\FlytBase Hackathon\\tester\\evaluation2\\evidence\\L2-1-telemetry-avalanche\\video\\L2-1-telemetry-avalanche.mp4"
       ],
       "screenshots": [
         "evidence\\L2-1-telemetry-avalanche\\01-baseline-4-drones.png",
@@ -64,9 +64,9 @@
     },
     {
       "id": "L2-2-thundering-herd-reconnect",
-      "title": "The Thundering Herd — 31 sockets dropped and reconnected at once",
+      "title": "The Thundering Herd \u2014 31 sockets dropped and reconnected at once",
       "description": "When an access-point blip drops every responder at once, each dashboard reconnects automatically. The UI must resolve the storm cleanly: every participant listed exactly once, presence accurate, no ghost rows, and the panel must converge without a manual refresh.",
-      "approach": "30 users are created and joined through the public REST API, then connected as presence-carrying socket clients using the same handshake the dashboard uses (30 clients + the commander’s browser = 31 sockets). A single server-side socket-kick fault drops them all simultaneously; clients auto-reconnect with jittered delays, producing a genuine reconnect storm. Recovery time is measured from kick to the moment the commander’s panel shows every participant connected again; DOM rows are diffed against unique participant identities to catch duplicates and ghosts; the vision judge inspects the panel.",
+      "approach": "30 users are created and joined through the public REST API, then connected as presence-carrying socket clients using the same handshake the dashboard uses (30 clients + the commander\u2019s browser = 31 sockets). A single server-side socket-kick fault drops them all simultaneously; clients auto-reconnect with jittered delays, producing a genuine reconnect storm. Recovery time is measured from kick to the moment the commander\u2019s panel shows every participant connected again; DOM rows are diffed against unique participant identities to catch duplicates and ghosts; the vision judge inspects the panel.",
       "categories": [
         "Performance",
         "Real-time and multi-user",
@@ -94,14 +94,14 @@
       "issues": [],
       "notes": [
         "created and joined 30 users via REST",
-        "socket-kick injected — all sockets dropped simultaneously",
+        "socket-kick injected \u2014 all sockets dropped simultaneously",
         "post-herd probes: {\"fps\":50,\"longTasks\":3,\"longestTaskMs\":75,\"domNodes\":324,\"heapMB\":54.2}"
       ],
       "judgeNotes": [
-        "herd-review: skipped — no judge API key configured"
+        "herd-review: skipped \u2014 no judge API key configured"
       ],
       "videos": [
-        "C:\\Users\\siddh\\Desktop\\FlytBase Hackathon\\tester\\evaluation2\\evidence\\L2-2-thundering-herd-reconnect\\video\\ben-1.mp4"
+        "C:\\Users\\siddh\\Desktop\\FlytBase Hackathon\\tester\\evaluation2\\evidence\\L2-2-thundering-herd-reconnect\\video\\L2-2-thundering-herd-reconnect.mp4"
       ],
       "screenshots": [
         "evidence\\L2-2-thundering-herd-reconnect\\01-herd-all-connected.png",
@@ -111,8 +111,8 @@
     },
     {
       "id": "L2-3-resource-starvation",
-      "title": "Resource Starvation — 300 messages, DOM bloat and scroll health",
-      "description": "An incident that stays open for hours accumulates chat and drone tracks. The browser must keep delivering every message live, keep the chat scrollable to the newest message, and degrade gracefully. Backend load tests cannot see DOM bloat or broken scroll — this scenario measures both, and the vision judge checks what truncation actually looks like.",
+      "title": "Resource Starvation \u2014 300 messages, DOM bloat and scroll health",
+      "description": "An incident that stays open for hours accumulates chat and drone tracks. The browser must keep delivering every message live, keep the chat scrollable to the newest message, and degrade gracefully. Backend load tests cannot see DOM bloat or broken scroll \u2014 this scenario measures both, and the vision judge checks what truncation actually looks like.",
       "approach": "300 messages are flooded through the public chat API from three participants while the dashboard is open. In-page probes measure DOM node growth and JS heap before/after; the test verifies all 300 messages render (none lost), hammers the chat scroll, and asserts the newest message remains reachable. The vision judge then inspects the flooded panel for visual truncation or broken layout. Linear DOM growth is reported honestly as a scalability finding (no list virtualization) rather than a false defect.",
       "categories": [
         "Performance",
@@ -135,7 +135,7 @@
         {
           "name": "resource growth is measured and bounded",
           "pass": true,
-          "detail": "fps 42→8, dom 182→1981, heap 48.1→48.1 MB, longTasks +59 (longest 102ms)"
+          "detail": "fps 42\u21928, dom 182\u21921981, heap 48.1\u219248.1 MB, longTasks +59 (longest 102ms)"
         },
         {
           "name": "chat scroll still reaches the newest message after the flood",
@@ -146,14 +146,14 @@
       "issues": [],
       "notes": [
         "baseline: {\"fps\":42,\"longTasks\":0,\"longestTaskMs\":0,\"domNodes\":182,\"heapMB\":48.1}",
-        "heap growth: 0 MB — DOM grows linearly because the chat list is not virtualized; noted as a scalability finding, not a false defect",
+        "heap growth: 0 MB \u2014 DOM grows linearly because the chat list is not virtualized; noted as a scalability finding, not a false defect",
         "final probes: {\"fps\":24,\"longTasks\":59,\"longestTaskMs\":102,\"domNodes\":1988,\"heapMB\":48.1}"
       ],
       "judgeNotes": [
-        "starvation-review: skipped — no judge API key configured"
+        "starvation-review: skipped \u2014 no judge API key configured"
       ],
       "videos": [
-        "C:\\Users\\siddh\\Desktop\\FlytBase Hackathon\\tester\\evaluation2\\evidence\\L2-3-resource-starvation\\video\\cara-1.mp4"
+        "C:\\Users\\siddh\\Desktop\\FlytBase Hackathon\\tester\\evaluation2\\evidence\\L2-3-resource-starvation\\video\\L2-3-resource-starvation.mp4"
       ],
       "screenshots": [
         "evidence\\L2-3-resource-starvation\\01-chat-after-flood.png",
